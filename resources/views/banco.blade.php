@@ -32,7 +32,6 @@
 
 <div class="container text-center mt-4">
     <h3>BÀN CỜ {{ $n }} x {{ $n }}</h3>
-    <p class="text-muted">Sinh viên: Hong Phuc - MSSV: 4010367</p>
 
     <div class="chess-board mt-3">
         @for($i = 0; $i < $n; $i++)

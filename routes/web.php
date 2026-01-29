@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -10,6 +11,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| SIGN IN
+|--------------------------------------------------------------------------
+*/
+Route::get('/signin', [AuthController::class, 'signIn'])->name('signin');
+Route::post('/signin', [AuthController::class, 'checkSignIn'])->name('check.signin');
 
 /*
 |--------------------------------------------------------------------------
@@ -47,20 +56,16 @@ Route::get('/sinhvien/{name?}/{mssv?}', function ($name = "Hong Phuc", $mssv = "
 
 /*
 |--------------------------------------------------------------------------
-| BÀN CỜ - FORM & VIEW
+| BÀN CỜ
 |--------------------------------------------------------------------------
 */
-
-// Form nhập n
 Route::get('/banco', function () {
     return view('banco_form');
 })->name('banco.form');
 
-// Hiển thị bàn cờ
 Route::get('/banco/view', function () {
     $n = request('n');
 
-    // kiểm tra hợp lệ
     if (!$n || $n < 2 || $n > 20) {
         $n = 8;
     }
@@ -70,7 +75,7 @@ Route::get('/banco/view', function () {
 
 /*
 |--------------------------------------------------------------------------
-| FALLBACK 404
+| FALLBACK 404 (LUÔN ĐỂ CUỐI)
 |--------------------------------------------------------------------------
 */
 Route::fallback(function () {
