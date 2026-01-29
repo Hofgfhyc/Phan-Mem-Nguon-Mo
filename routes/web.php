@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AgeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,11 +15,24 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| SIGN IN
+| AGE (PHẢI VÀO ĐÂY TRƯỚC)
 |--------------------------------------------------------------------------
 */
-Route::get('/signin', [AuthController::class, 'signIn'])->name('signin');
-Route::post('/signin', [AuthController::class, 'checkSignIn'])->name('check.signin');
+Route::get('/age', [AgeController::class, 'form'])->name('age.form');
+Route::post('/age', [AgeController::class, 'check'])->name('age.check');
+
+/*
+|--------------------------------------------------------------------------
+| SIGN IN (BỊ KIỂM TRA TUỔI)
+|--------------------------------------------------------------------------
+*/
+Route::get('/signin', [AuthController::class, 'signIn'])
+    ->middleware('check.age')
+    ->name('signin');
+
+Route::post('/signin', [AuthController::class, 'checkSignIn'])
+    ->middleware('check.age')
+    ->name('check.signin');
 
 /*
 |--------------------------------------------------------------------------
@@ -44,34 +58,6 @@ Route::prefix('product')->group(function () {
         return view('product.detail', compact('id'));
     })->name('product.detail');
 });
-
-/*
-|--------------------------------------------------------------------------
-| SINH VIÊN
-|--------------------------------------------------------------------------
-*/
-Route::get('/sinhvien/{name?}/{mssv?}', function ($name = "Hong Phuc", $mssv = "4010367") {
-    return view('sinhvien', compact('name', 'mssv'));
-})->name('sinhvien');
-
-/*
-|--------------------------------------------------------------------------
-| BÀN CỜ
-|--------------------------------------------------------------------------
-*/
-Route::get('/banco', function () {
-    return view('banco_form');
-})->name('banco.form');
-
-Route::get('/banco/view', function () {
-    $n = request('n');
-
-    if (!$n || $n < 2 || $n > 20) {
-        $n = 8;
-    }
-
-    return view('banco', compact('n'));
-})->name('banco.view');
 
 /*
 |--------------------------------------------------------------------------
