@@ -6,26 +6,20 @@ use Illuminate\Http\Request;
 
 class AgeController extends Controller
 {
-    // Hiển thị form nhập tuổi
     public function form()
     {
         return view('age.form');
     }
 
-    // Xử lý form
     public function check(Request $request)
     {
         $age = $request->age;
 
-        // Kiểm tra dữ liệu hợp lệ
-        if (!is_numeric($age)) {
-            return "Không được phép truy cập!";
+        if ($age >= 18) {
+            session(['age' => $age]);
+            return redirect()->route('signin');
         }
 
-        // Lưu vào session
-        session(['age' => (int)$age]);
-
-        // Chuyển sang trang đăng ký
-        return redirect()->route('signin');
+        return back()->with('error', 'Bạn chưa đủ 18 tuổi!');
     }
 }

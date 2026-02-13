@@ -67,7 +67,14 @@
 
                 <div class="card-body p-4">
 
-                    <form action="{{ route('check.signin') }}" method="POST">
+                    {{-- HIỂN THỊ LỖI VALIDATE --}}
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('check.login') }}" method="POST">
                         @csrf
 
                         <div class="mb-3">
@@ -89,11 +96,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">MSSV</label>
-                                <input type="text" name="mssv" class="form-control"  required>
+                                <input type="text" name="mssv" class="form-control" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Lớp</label>
-                                <input type="text" name="class" class="form-control"  required>
+                                <input type="text" name="class" class="form-control" required>
                             </div>
                         </div>
 
@@ -107,7 +114,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button class="btn btn-primary">Sign In</button>
+                            <button class="btn btn-primary">Đăng ký</button>
                         </div>
 
                     </form>
@@ -115,7 +122,8 @@
                 </div>
 
                 <div class="card-footer text-center text-muted">
-                    © PMNM - Hong Phuc
+                    © PMNM - Hong Phuc <br>
+                    <a href="{{ route('login') }}">Đã có tài khoản? Đăng nhập</a>
                 </div>
             </div>
 

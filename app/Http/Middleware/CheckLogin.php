@@ -5,14 +5,12 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class CheckAge
+class CheckLogin
 {
     public function handle(Request $request, Closure $next)
     {
-        $age = session('age');
-
-        if (!is_numeric($age) || $age < 18) {
-            return redirect()->route('age.form');
+        if (!session('logged_in')) {
+            return redirect()->route('signin');
         }
 
         return $next($request);

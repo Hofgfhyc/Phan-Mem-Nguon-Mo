@@ -6,27 +6,21 @@ use App\Http\Controllers\AgeController;
 
 /*
 |--------------------------------------------------------------------------
-| HOME
+| AGE
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('home');
-})->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| AGE (PHẢI VÀO ĐÂY TRƯỚC)
-|--------------------------------------------------------------------------
-*/
-Route::get('/age', [AgeController::class, 'form'])->name('age.form');
+Route::get('/', [AgeController::class, 'form'])->name('age.form');
 Route::post('/age', [AgeController::class, 'check'])->name('age.check');
 
+
 /*
 |--------------------------------------------------------------------------
-| SIGN IN (BỊ KIỂM TRA TUỔI)
+| AUTH
 |--------------------------------------------------------------------------
 */
-Route::get('/signin', [AuthController::class, 'signIn'])
+
+Route::get('/signin', [AuthController::class, 'showSignin'])
     ->middleware('check.age')
     ->name('signin');
 
@@ -34,12 +28,37 @@ Route::post('/signin', [AuthController::class, 'checkSignIn'])
     ->middleware('check.age')
     ->name('check.signin');
 
+Route::get('/login', [AuthController::class, 'showLogin'])
+    ->middleware('check.age')
+    ->name('login');
+
+Route::post('/login', [AuthController::class, 'checkLogin'])
+    ->middleware('check.age')
+    ->name('check.login');
+
+Route::get('/logout', [AuthController::class, 'logout'])
+    ->middleware(['check.age','check.login'])
+    ->name('logout');
+
+
 /*
 |--------------------------------------------------------------------------
-| PRODUCT
+| HOME (PHẢI LOGIN)
 |--------------------------------------------------------------------------
 */
-Route::prefix('product')->group(function () {
+
+Route::get('/home', function () {
+    return view('home');
+})->middleware(['check.age','check.login'])->name('home');
+
+
+/*
+|--------------------------------------------------------------------------
+| PRODUCT (PHẢI LOGIN)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('product')->middleware(['check.age','check.login'])->group(function () {
 
     Route::get('/', function () {
         $products = [
@@ -59,11 +78,50 @@ Route::prefix('product')->group(function () {
     })->name('product.detail');
 });
 
+
 /*
 |--------------------------------------------------------------------------
-| FALLBACK 404 (LUÔN ĐỂ CUỐI)
+| BANCO
 |--------------------------------------------------------------------------
 */
+Route::prefix('banco')->middleware('check.age')->group(function () {
+
+    Route::get('/form', function (\Illuminate\Http\Request $request) {
+
+        $n = $request->n;
+
+        return view('banco_form', compact('n'));
+
+    })->name('banco.form');
+
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| SINH VIEN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/sinhvien', function () {
+    return view('sinhvien', [
+        'name' => 'Pham Dinh Hong Phuc',
+        'mssv' => '40103'
+    ]);
+})->middleware('check.age')->name('sinhvien');
+
+
+use App\Http\Controllers\CategoryController;
+
+Route::resource('categories', CategoryController::class);
+
+/*
+|--------------------------------------------------------------------------
+| FALLBACK
+|--------------------------------------------------------------------------
+*/
+
 Route::fallback(function () {
     return response()->view('error.404', [], 404);
 });
